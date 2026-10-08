@@ -298,7 +298,7 @@ public class BoardView : MonoBehaviour
                 if (valid && !gameOver)
                 {
                     // Highlight legal moves green
-                    renderer.color = Color.green;
+                    renderer.color = new Color(0f, 1f, 0f, 0.4f);
                 }
                 else
                 {
