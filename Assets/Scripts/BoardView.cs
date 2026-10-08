@@ -3,17 +3,18 @@ using UnityEngine;
 public class BoardView : MonoBehaviour
 {
     //create board array
-    public int[,] board = new int[8, 8];
+    int[,] board = new int[8, 8];
     //1 black 2 white
     public int currentPlayer = 1;
     public GameObject squarePrefab;
     public GameObject discPrefab;
     public GameObject discPrefab2;
-
+    //public playerturn playerturn;
     void Start()
     {
         Setup();
         Draw();
+        //playerturn.EndTurn();
     }
     private void Update()
     {
