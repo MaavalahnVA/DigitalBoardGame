@@ -1,9 +1,15 @@
+using System.Collections.Generic;
+using TMPro;
+using Unity.Multiplayer.PlayMode;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class BoardView : MonoBehaviour
 {
+    [SerializeField] private GameObject gameOverScreen;
+    [SerializeField] private TextMeshProUGUI _text, gameOverText, scoreText;
+
     // 0 = empty, 1 = black, 2 = white
     int[,] board = new int[8, 8];
 
@@ -29,6 +35,8 @@ public class BoardView : MonoBehaviour
         Setup();
         Draw();
         HighlightMoves();
+        _text.text = "Player Turn: " + GetColorName(currentPlayer);
+        scoreText.text = "Black: " + CountScore()[0] + "\n" + "White: " + CountScore()[1];
     }
 
     void Update()
@@ -113,6 +121,8 @@ public class BoardView : MonoBehaviour
     // Attempt to place a helmet on a square
     void MakeMove(int row, int col)
     {
+        
+        
         // Cannot place a helmet on an occupied square
         if (board[row, col] != 0)
         {
@@ -139,6 +149,7 @@ public class BoardView : MonoBehaviour
 
         // Switch to the other player
         EndTurn();
+        scoreText.text = "Black: " + CountScore()[0] + "\n" + "White: " + CountScore()[1];
 
         // Skip the other player if they cannot move
         if (!HasMove())
@@ -153,7 +164,7 @@ public class BoardView : MonoBehaviour
             Debug.Log("Game Over!");
 
             // Display the final scores
-            CountScore();
+            CountFinalScore();
         }
         else
         {
@@ -190,14 +201,14 @@ public class BoardView : MonoBehaviour
         // All eight directions
         int[,] directions =
         {
-            { -1, 0 },  
-            { 1, 0 },   
-            { 0, -1 }, 
-            { 0, 1 },   
-            { -1, -1 }, 
-            { -1, 1 },  
-            { 1, -1 }, 
-            { 1, 1 }    
+            { -1, 0 },
+            { 1, 0 },
+            { 0, -1 },
+            { 0, 1 },
+            { -1, -1 },
+            { -1, 1 },
+            { 1, -1 },
+            { 1, 1 }
         };
 
         // Check each direction
@@ -263,10 +274,12 @@ public class BoardView : MonoBehaviour
         if (currentPlayer == 1)
         {
             currentPlayer = 2;
+            _text.text = "Player Turn: " + GetColorName(currentPlayer);
         }
         else
         {
             currentPlayer = 1;
+            _text.text = "Player Turn: " + GetColorName(currentPlayer);
         }
     }
 
@@ -296,7 +309,7 @@ public class BoardView : MonoBehaviour
     }
 
     // Count the helmets when the game ends
-    void CountScore()
+    void CountFinalScore()
     {
         int black = 0;
         int white = 0;
@@ -322,14 +335,51 @@ public class BoardView : MonoBehaviour
         if (black > white)
         {
             Debug.Log("Black Wins!");
+            gameOverText.text = "Game Over! Black Wins!";
         }
         else if (white > black)
         {
             Debug.Log("White Wins!");
+            gameOverText.text = "Game Over! White Wins!";
         }
         else
         {
             Debug.Log("It's a Tie!");
+            gameOverText.text = "Game Over! It's a Tie!";
         }
+        gameOverScreen.SetActive(true);
+        
+    }
+    string GetColorName(int player)
+    {
+        if (player == 1)
+        {
+            return "Black";
+        }
+        return "White";
+    }
+    int[] CountScore()
+    {
+        int black = 0;
+        int white = 0;
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                if (board[row, col] == 1)
+                {
+                    black++;
+                }
+                if (board[row, col] == 2)
+                {
+                    white++;
+                }
+            }
+        }
+        return new int[] { black, white };
+    }
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
