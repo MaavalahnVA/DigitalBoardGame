@@ -9,6 +9,10 @@ public class BoardView : MonoBehaviour
 {
     [SerializeField] private GameObject gameOverScreen;
     [SerializeField] private TextMeshProUGUI _text, gameOverText, scoreText;
+    [SerializeField] private AudioClip paratrooperSound, victorySound;
+
+    private AudioSource audioSource;
+    private AudioSource audioSource2;
 
     // 0 = empty, 1 = black, 2 = white
     int[,] board = new int[8, 8];
@@ -138,6 +142,9 @@ public class BoardView : MonoBehaviour
         // Place the new helmet
         board[row, col] = currentPlayer;
         DrawDisc(row, col);
+        audioSource = GetComponent<AudioSource>();
+        audioSource.clip = paratrooperSound;
+        audioSource.Play();
 
         // Flip all captured opponent helmets
         foreach (Vector2Int piece in flips)
@@ -328,6 +335,9 @@ public class BoardView : MonoBehaviour
                 }
             }
         }
+        audioSource2 = GetComponent<AudioSource>();
+        audioSource2.clip = victorySound;
+        audioSource2.Play();
 
         // Print the final scores
         Debug.Log("Black: " + black + " White: " + white);
